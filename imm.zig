@@ -5,7 +5,7 @@ pub const Imm = union(enum) {
     imm16: u16,
     imm32: u32,
     imm64: u64,
-    imm: u64,    // Non-sized, Must be resolved to a sized one before encoding
+    imm: u64, // Non-sized, Must be resolved to a sized one before encoding
     const Self = @This();
 
     pub inline fn matches(self: Self, other: Self) bool {
@@ -34,7 +34,7 @@ pub const Imm = union(enum) {
                     else => return false,
                 }
             },
-            else => unreachable,        // Template parameter must never be a non sized variant
+            else => unreachable, // Template parameter must never be a non sized variant
         }
     }
 
@@ -62,7 +62,7 @@ pub const Imm = union(enum) {
             return .{ .imm64 = @intCast(u64, uval) };
         }
     }
-    
+
     pub inline fn toImm(imm: Self, dest_size: u16) !Self {
         switch (dest_size) {
             8 => return Self{ .imm8 = imm.toImm8() },
@@ -155,12 +155,12 @@ pub const Imm = union(enum) {
         }
     }
 
-    pub inline fn encode(self: Self) ![]const u8 {
+    pub inline fn encode(self: Self, allocator: std.mem.Allocator) !std.ArrayList(u8) {
         switch (self) {
-            .imm8 => |ival| return byte.intToLEBytes(u8, ival),
-            .imm16 => |ival| return byte.intToLEBytes(u16, ival),
-            .imm32 => |ival| return byte.intToLEBytes(u32, ival),
-            .imm64 => |ival| return byte.intToLEBytes(u64, ival),
+            .imm8 => |ival| return try byte.intToLEBytes(u8, allocator, ival),
+            .imm16 => |ival| return try byte.intToLEBytes(u16, allocator, ival),
+            .imm32 => |ival| return try byte.intToLEBytes(u32, allocator, ival),
+            .imm64 => |ival| return try byte.intToLEBytes(u64, allocator, ival),
             .imm => return error.MustBeResolvedToASizedVariant,
         }
     }
