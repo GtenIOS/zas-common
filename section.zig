@@ -41,7 +41,7 @@ pub const Section = struct {
         return Self{ .idx = idx, .name = ".data", .type = .Data };
     }
 
-    pub fn initRodata(idx: u8) Self {
+    pub fn initRoData(idx: u8) Self {
         return Self{ .idx = idx, .name = ".rodata", .type = .Rodata };
     }
 
@@ -54,7 +54,7 @@ pub const Section = struct {
             switch (section_type) {
                 .Text => return initText(idx),
                 .Data => return initData(idx),
-                .Rodata => return initRodata(idx),
+                .Rodata => return initRoData(idx),
                 .Bss => return initBss(idx),
             }
         } else return error.InvalidSectionName;
