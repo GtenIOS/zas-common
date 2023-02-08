@@ -30,6 +30,7 @@ pub const Section = struct {
     name: []const u8,
     data: ?std.ArrayList(u8) = null,
     symbols: ?std.ArrayList(*Symbol) = null,
+    res_size: ?usize = null,
     type: SectionType,
     const Self = @This();
 
@@ -110,6 +111,24 @@ pub const Section = struct {
         } else {
             self.symbols = std.ArrayList(*Symbol).init(allocator);
             try self.symbols.?.append(sym);
+        }
+
+        if (sym.res_size) |res_size| { 
+            if (self.res_size) |*sec_res_size| {
+                sec_res_size.* += res_size;
+            }
+            else {
+                self.res_size = res_size;
+            }
+        }
+    }
+
+    pub inline fn addResSize(self: *Self, res_size: usize) void {
+        if (self.res_size) |*sec_res_size| {
+            sec_res_size.* += res_size;
+        }
+        else {
+            self.res_size = res_size;
         }
     }
 

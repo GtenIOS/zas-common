@@ -9,5 +9,6 @@ pub const Symbol = struct {
     did_init: bool,
     ofst_in_sec: u32,
     section: *const Section,
+    res_size: ?usize = null,
     unknown_idx: ?usize = null,
 };
