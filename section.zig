@@ -65,6 +65,10 @@ pub const Section = struct {
         return if (self.data) |d| @intCast(u32, d.items.len) else 0;
     }
 
+    pub inline fn virt_size(self: Self) usize {
+        return if (self.data) |d| d.items.len else self.res_size orelse 0;
+    }
+
     pub inline fn appendSlice(self: *Self, allocator: std.mem.Allocator, bytes: []const u8) !void {
         if (self.data) |*data| {
             try data.appendSlice(bytes);
@@ -113,11 +117,10 @@ pub const Section = struct {
             try self.symbols.?.append(sym);
         }
 
-        if (sym.res_size) |res_size| { 
+        if (sym.res_size) |res_size| {
             if (self.res_size) |*sec_res_size| {
                 sec_res_size.* += res_size;
-            }
-            else {
+            } else {
                 self.res_size = res_size;
             }
         }
@@ -126,8 +129,7 @@ pub const Section = struct {
     pub inline fn addResSize(self: *Self, res_size: usize) void {
         if (self.res_size) |*sec_res_size| {
             sec_res_size.* += res_size;
-        }
-        else {
+        } else {
             self.res_size = res_size;
         }
     }
